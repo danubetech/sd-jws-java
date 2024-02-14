@@ -1,5 +1,7 @@
 package com.danubetech.sdjws;
 
+import com.danubetech.sdjws.digest.DefaultDigestGenerator;
+import com.danubetech.sdjws.digest.DigestGenerator;
 import com.danubetech.sdjws.disclosure.Disclosure;
 import com.danubetech.sdjws.disclosure.DisclosureGenerator;
 import jakarta.json.*;
@@ -45,7 +47,7 @@ public class SDJWSObject {
      * Manipulation methods
      */
 
-    public Disclosure generateDisclosure(final JsonPointer jsonPointer) {
+    public Disclosure generateDisclosure(final JsonPointer jsonPointer, final DigestGenerator digestGenerator) {
 
         // find the JSON value to extract as a disclosure
 
@@ -68,7 +70,7 @@ public class SDJWSObject {
 
         JsonArray previousSdJsonArray = this.getSdJsonArray();
         JsonArrayBuilder sdJsonArrayBuilder = previousSdJsonArray != null ? Json.createArrayBuilder(previousSdJsonArray) : Json.createArrayBuilder();
-        sdJsonArrayBuilder.add(disclosure.getDisclosureDigest());
+        sdJsonArrayBuilder.add(disclosure.calculateDisclosureDigest(digestGenerator));
         JsonArray sdJsonArray = sdJsonArrayBuilder.build();
 
         jsonObjectBuilder.add("_sd", sdJsonArray);
@@ -77,11 +79,11 @@ public class SDJWSObject {
 
         String previousSdAlg = this.getSdAlg();
         if (previousSdAlg != null) {
-            if (! previousSdAlg.equals(this.getDisclosureGenerator().getDigestGenerator().getAlgorithm())) {
-                throw new IllegalStateException("Digest algorithm in '_sd_alg' " + previousSdAlg + " does not match disclosure generator algorithm " + this.getDisclosureGenerator().getDigestGenerator().getAlgorithm());
+            if (! previousSdAlg.equals(digestGenerator.getAlgorithm())) {
+                throw new IllegalStateException("Digest algorithm in '_sd_alg' " + previousSdAlg + " does not match digest generator algorithm " + digestGenerator.getAlgorithm());
             }
         } else {
-            jsonObjectBuilder.add("_sd_alg", this.getDisclosureGenerator().getDigestGenerator().getAlgorithm());
+            jsonObjectBuilder.add("_sd_alg", digestGenerator.getAlgorithm());
         }
 
         // finish manipulation of the SD-JWS object
@@ -94,18 +96,31 @@ public class SDJWSObject {
         return disclosure;
     }
 
-    public void applyDisclosure(final Disclosure disclosure) {
+    public Disclosure generateDisclosure(final JsonPointer jsonPointer) {
+        return this.generateDisclosure(jsonPointer, DefaultDigestGenerator.getInstance());
+    }
+
+    public void applyDisclosure(final Disclosure disclosure, final DigestGenerator digestGenerator) {
+
+        // check if digest algorithm matches
+
+        String algorithm = this.getSdAlg();
+        if (! digestGenerator.getAlgorithm().equalsIgnoreCase(algorithm)) {
+            throw new IllegalStateException("Digest algorithm in '_sd_alg' " + algorithm + " does not match digest generator algorithm " + digestGenerator.getAlgorithm());
+        }
 
         // find the digest in the "_sd" array
 
         final JsonArray sdJsonArray = this.getSdJsonArray();
         if (sdJsonArray == null) throw new IllegalStateException("No '_sd' found in SD-JWS object");
 
+        final String disclosureDigest = disclosure.calculateDisclosureDigest(digestGenerator);
+
         int sdJsonArrayIndex = IntStream.range(0, sdJsonArray.size())
-                .filter(streamIndex -> disclosure.getDisclosureDigest().equals(sdJsonArray.getString(streamIndex)))
+                .filter(streamIndex -> disclosureDigest.equals(sdJsonArray.getString(streamIndex)))
                 .findFirst()
                 .orElse(-1);
-        if (sdJsonArrayIndex < 0) throw new IllegalStateException("Disclosure digest " + disclosure.getDisclosureDigest() + " not found in '_sd' in SD-JWS object");
+        if (sdJsonArrayIndex < 0) throw new IllegalStateException("Disclosure digest " + disclosureDigest + " not found in '_sd' in SD-JWS object");
 
         JsonPointer sdJsonArrayJsonPointer = Json.createPointer("/_sd/" + sdJsonArrayIndex);
 
@@ -130,6 +145,10 @@ public class SDJWSObject {
         // done
 
         this.setJsonObject(jsonObject);
+    }
+
+    public void applyDisclosure(final Disclosure disclosure) {
+        this.applyDisclosure(disclosure, DefaultDigestGenerator.getInstance());
     }
 
     public JsonArray getSdJsonArray() {

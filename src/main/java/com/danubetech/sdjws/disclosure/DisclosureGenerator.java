@@ -1,11 +1,8 @@
 package com.danubetech.sdjws.disclosure;
 
-import com.danubetech.sdjws.digest.DefaultDigestGenerator;
-import com.danubetech.sdjws.digest.DigestGenerator;
 import com.danubetech.sdjws.salt.DefaultSaltGenerator;
 import com.danubetech.sdjws.salt.SaltGenerator;
 import jakarta.json.*;
-import jakarta.json.stream.JsonParser;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -19,21 +16,19 @@ public class DisclosureGenerator {
     private Base64.Encoder encoder;
     private Base64.Decoder decoder;
     private SaltGenerator saltGenerator;
-    private DigestGenerator digestGenerator;
 
     public static DisclosureGenerator getInstance() {
         return instance;
     }
 
-    public DisclosureGenerator(Base64.Encoder encoder, Base64.Decoder decoder, SaltGenerator saltGenerator, DigestGenerator digestGenerator) {
+    public DisclosureGenerator(Base64.Encoder encoder, Base64.Decoder decoder, SaltGenerator saltGenerator) {
         this.encoder = encoder;
         this.decoder = decoder;
         this.saltGenerator = saltGenerator;
-        this.digestGenerator = digestGenerator;
     }
 
     public DisclosureGenerator() {
-        this(Base64.getUrlEncoder().withoutPadding(), Base64.getUrlDecoder(), DefaultSaltGenerator.getInstance(), DefaultDigestGenerator.getInstance());
+        this(Base64.getUrlEncoder().withoutPadding(), Base64.getUrlDecoder(), DefaultSaltGenerator.getInstance());
     }
 
     public Disclosure create(final String salt, final JsonPointer jsonPointer, final JsonValue jsonValue) {
@@ -49,9 +44,7 @@ public class DisclosureGenerator {
         jsonWriter.close();
         String disclosureString = this.getEncoder().encodeToString(disclosureStringWriter.toString().getBytes(StandardCharsets.UTF_8));
 
-        String disclosureDigest = this.getDigestGenerator().generateDigest(disclosureString);
-
-        return new Disclosure(salt, jsonPointer, jsonValue, disclosureJson, disclosureString, disclosureDigest);
+        return new Disclosure(salt, jsonPointer, jsonValue, disclosureJson, disclosureString);
     }
 
     public Disclosure create(final JsonPointer jsonPointer, final JsonValue jsonValue) {
@@ -68,9 +61,7 @@ public class DisclosureGenerator {
         JsonPointer jsonPointer = Json.createPointer(disclosureJson.getString(1));
         JsonValue jsonValue = disclosureJson.get(2);
 
-        String disclosureDigest = this.getDigestGenerator().generateDigest(disclosureString);
-
-        return new Disclosure(salt, jsonPointer, jsonValue, disclosureJson, disclosureString, disclosureDigest);
+        return new Disclosure(salt, jsonPointer, jsonValue, disclosureJson, disclosureString);
     }
 
     /*
@@ -99,13 +90,5 @@ public class DisclosureGenerator {
 
     public void setSaltGenerator(SaltGenerator saltGenerator) {
         this.saltGenerator = saltGenerator;
-    }
-
-    public DigestGenerator getDigestGenerator() {
-        return this.digestGenerator;
-    }
-
-    public void setDigestGenerator(DigestGenerator digestGenerator) {
-        this.digestGenerator = digestGenerator;
     }
 }

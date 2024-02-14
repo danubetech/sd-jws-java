@@ -1,5 +1,7 @@
 package com.danubetech.sdjws.disclosure;
 
+import com.danubetech.sdjws.digest.DefaultDigestGenerator;
+import com.danubetech.sdjws.digest.DigestGenerator;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonPointer;
 import jakarta.json.JsonValue;
@@ -12,15 +14,21 @@ public class Disclosure {
 
     private final JsonArray disclosureJson;
     private final String disclosureString;
-    private final String disclosureDigest;
 
-    Disclosure(String salt, JsonPointer jsonPointer, JsonValue jsonValue, JsonArray disclosureJson, String disclosureString, String disclosureDigest) {
+    Disclosure(String salt, JsonPointer jsonPointer, JsonValue jsonValue, JsonArray disclosureJson, String disclosureString) {
         this.salt = salt;
         this.jsonPointer = jsonPointer;
         this.jsonValue = jsonValue;
         this.disclosureJson = disclosureJson;
         this.disclosureString = disclosureString;
-        this.disclosureDigest = disclosureDigest;
+    }
+
+    public String calculateDisclosureDigest(DigestGenerator digestGenerator) {
+        return digestGenerator.generateDigest(this.getDisclosureString());
+    }
+
+    public String calculateDisclosureDigest() {
+        return this.calculateDisclosureDigest(DefaultDigestGenerator.getInstance());
     }
 
     /*
@@ -47,10 +55,6 @@ public class Disclosure {
         return this.disclosureString;
     }
 
-    public String getDisclosureDigest() {
-        return this.disclosureDigest;
-    }
-
     /*
      * Object methods
      */
@@ -63,7 +67,6 @@ public class Disclosure {
                 ", jsonValue=" + jsonValue +
                 ", disclosureJson=" + disclosureJson +
                 ", disclosureString='" + disclosureString + '\'' +
-                ", disclosureDigest='" + disclosureDigest + '\'' +
                 '}';
     }
 }
