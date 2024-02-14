@@ -2,13 +2,18 @@ package com.danubetech.sdjws;
 
 import com.danubetech.sdjws.disclosure.Disclosure;
 import com.danubetech.sdjws.disclosure.DisclosureGenerator;
+import com.danubetech.sdjws.jws.JWSGenerator;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-public class VCDMDisclosureTest {
+public class JWSGeneratorTest {
 
 	public static final String SDJWS = """
 			{
@@ -42,15 +47,29 @@ public class VCDMDisclosureTest {
 			DisclosureGenerator.getInstance().parse("WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgIi90eXBlIiwgWyJWZXJpZmlhYmxlQ3JlZGVudGlhbCIsICJTdHVkZW50SUQiXV0")
 	);
 
+	@Test
+	public void testJWSGenerator() throws Exception {
+		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
+		JWSObject jwsObject = new JWSGenerator().generateJWSObject(sdjwsObject, DISCLOSURES, JWSAlgorithm.ES256);
+
+		ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
+		JWSSigner jwsSigner = new ECDSASigner(ecKey);
+		jwsObject.sign(jwsSigner);
+	}
 
 	@Test
-	public void testVCDMDisclosure() throws Exception {
+	public void testJWSGeneratorJSON() throws Exception {
 		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
+		JWSObjectJSON jwsObjectJson = new JWSGenerator().generateJWSObjectJSON(sdjwsObject, DISCLOSURES);
 
-		for (Disclosure disclosure : DISCLOSURES) sdjwsObject.applyDisclosure(disclosure);
+		JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.ES256)
+				.type(JOSEObjectType.JOSE)
+				.base64URLEncodePayload(false)
+				.criticalParams(Set.of("b64"))
+				.build();
 
-		assertNull(sdjwsObject.getSdJsonArray());
-		assertNull(sdjwsObject.getSdAlg());
-		assertNull(sdjwsObject.getSdTyp());
+		ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
+		JWSSigner jwsSigner = new ECDSASigner(ecKey);
+		jwsObjectJson.sign(jwsHeader, jwsSigner);
 	}
 }
