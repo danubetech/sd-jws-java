@@ -1,0 +1,189 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.danubetech</groupId>
+	<artifactId>sd-jws-java</artifactId>
+	<packaging>jar</packaging>
+	<version>0.1-SNAPSHOT</version>
+	<name>sd-jws-java</name>
+
+	<scm>
+		<url>https://github.com/danubetech/sd-jws-java</url>
+		<connection>scm:git:https://github.com/danubetech/sd-jws-java.git</connection>
+		<developerConnection>scm:git:https://github.com/danubetech/sd-jws-java.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/danubetech/sd-jws-java/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>danubetech-maven-snapshots</id>
+			<url>https://repo.danubetech.com/repository/maven-snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>danubetech-maven-releases</id>
+			<url>https://repo.danubetech.com/repository/maven-releases/</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>danubetech-maven-public</id>
+			<url>https://repo.danubetech.com/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>sovrin</id>
+			<url>https://repo.sovrin.org/repository/maven-public</url>
+		</repository>
+	</repositories>
+
+	<properties>
+
+		<!-- Project Properties -->
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>17</java.version>
+		<github.global.server>github</github.global.server>
+		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
+
+		<!-- Plugin Versions -->
+
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+		<maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+		<maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+		<maven-scm-plugin.version>2.0.1</maven-scm-plugin.version>
+		<maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<release>${java.version}</release>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<scmCommentPrefix>[skip ci]</scmCommentPrefix>
+					<pomFileName>pom.xml</pomFileName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-maven-version</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.2.5</version>
+								</requireMavenVersion>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${maven-release-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>${maven-scm-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>${maven-enforcer-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.10.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.10.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.8.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>5.8.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>jakarta.json</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+	</dependencies>
+
+</project>
