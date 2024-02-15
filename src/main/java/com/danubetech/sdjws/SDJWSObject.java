@@ -9,6 +9,7 @@ import jakarta.json.stream.JsonGenerator;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -26,8 +27,17 @@ public class SDJWSObject {
      * (De-)serialization
      */
 
+    public static SDJWSObject fromJsonObject(JsonObject jsonObject) {
+        return new SDJWSObject(jsonObject);
+    }
+
     public static SDJWSObject fromJson(String json) {
         JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        return new SDJWSObject(jsonObject);
+    }
+
+    public static SDJWSObject fromMap(Map<String, Object> map) {
+        JsonObject jsonObject = Json.createObjectBuilder(map).build();
         return new SDJWSObject(jsonObject);
     }
 
@@ -100,6 +110,14 @@ public class SDJWSObject {
         return this.generateDisclosure(jsonPointer, DefaultDigestGenerator.getInstance());
     }
 
+    public List<Disclosure> generateDisclosures(final List<JsonPointer> jsonPointers, final DigestGenerator digestGenerator) {
+        return jsonPointers.stream().map(jsonPointer -> this.generateDisclosure(jsonPointer, digestGenerator)).toList();
+    }
+
+    public List<Disclosure> generateDisclosures(final List<JsonPointer> jsonPointers) {
+        return jsonPointers.stream().map(jsonPointer -> this.generateDisclosure(jsonPointer, DefaultDigestGenerator.getInstance())).toList();
+    }
+
     public void applyDisclosure(final Disclosure disclosure, final DigestGenerator digestGenerator) {
 
         // check if digest algorithm matches
@@ -149,6 +167,14 @@ public class SDJWSObject {
 
     public void applyDisclosure(final Disclosure disclosure) {
         this.applyDisclosure(disclosure, DefaultDigestGenerator.getInstance());
+    }
+
+    public void applyDisclosures(final List<Disclosure> disclosures, final DigestGenerator digestGenerator) {
+        for (Disclosure disclosure : disclosures) this.applyDisclosure(disclosure, digestGenerator);
+    }
+
+    public void applyDisclosures(final List<Disclosure> disclosures) {
+        for (Disclosure disclosure : disclosures) this.applyDisclosure(disclosure, DefaultDigestGenerator.getInstance());
     }
 
     public JsonArray getSdJsonArray() {

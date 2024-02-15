@@ -9,7 +9,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GenerateDisclosureTest {
+public class GenerateDisclosuresTest {
 
 	private static final Random RANDOM1 = new Random(1);
 	private static final Random RANDOM2 = new Random(2);

@@ -42,12 +42,11 @@ public class VCDMDisclosureTest {
 			DisclosureGenerator.getInstance().parse("WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgIi90eXBlIiwgWyJWZXJpZmlhYmxlQ3JlZGVudGlhbCIsICJTdHVkZW50SUQiXV0")
 	);
 
-
 	@Test
 	public void testVCDMDisclosure() throws Exception {
 		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
 
-		for (Disclosure disclosure : DISCLOSURES) sdjwsObject.applyDisclosure(disclosure);
+		sdjwsObject.applyDisclosures(DISCLOSURES);
 
 		assertNull(sdjwsObject.getSdJsonArray());
 		assertNull(sdjwsObject.getSdAlg());
