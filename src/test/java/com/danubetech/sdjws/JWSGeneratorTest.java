@@ -11,7 +11,6 @@ import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Set;
 
 public class JWSGeneratorTest {
 
@@ -62,15 +61,10 @@ public class JWSGeneratorTest {
 		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
 		JWSObjectJSON jwsObjectJson = JWSGenerator.getInstance().generateJWSObjectJSON(sdjwsObject, DISCLOSURES);
 
-		JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.ES256)
-				.type(JOSEObjectType.JOSE)
-				.base64URLEncodePayload(false)
-				.criticalParams(Set.of("b64"))
-				.build();
+		JWSHeader jwsHeader = JWSGenerator.getInstance().generateJWSHeader(JWSAlgorithm.ES256);
 
 		ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
 		JWSSigner jwsSigner = new ECDSASigner(ecKey);
 		jwsObjectJson.sign(jwsHeader, jwsSigner);
-		System.out.println(jwsObjectJson.serializeFlattened());
 	}
 }

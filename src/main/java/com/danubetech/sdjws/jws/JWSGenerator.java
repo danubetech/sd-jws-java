@@ -11,6 +11,8 @@ import java.util.Set;
 
 public class JWSGenerator {
 
+    public static final JOSEObjectType JWS_JOSE_OBJECT_TYPE = new JOSEObjectType("JWS");
+
     private static final JWSGenerator instance = new JWSGenerator();
 
     public static JWSGenerator getInstance() {
@@ -20,13 +22,18 @@ public class JWSGenerator {
     public JWSGenerator() {
     }
 
-    public JWSObject generateJWSObject(SDJWSObject sdjwsObject, List<Disclosure> disclosures, JWSAlgorithm jwsAlgorithm) {
+    public JWSHeader generateJWSHeader(JWSAlgorithm jwsAlgorithm) {
 
-        JWSHeader jwsHeader = new JWSHeader.Builder(jwsAlgorithm)
-                .type(JOSEObjectType.JOSE)
+        return new JWSHeader.Builder(jwsAlgorithm)
+                .type(JWS_JOSE_OBJECT_TYPE)
                 .base64URLEncodePayload(false)
                 .criticalParams(Set.of("b64"))
                 .build();
+    }
+
+    public JWSObject generateJWSObject(SDJWSObject sdjwsObject, List<Disclosure> disclosures, JWSAlgorithm jwsAlgorithm) {
+
+        JWSHeader jwsHeader = this.generateJWSHeader(jwsAlgorithm);
 
         Payload payload = new Payload(Map.of(
                 "sd", sdjwsObject.getJsonObject(),
