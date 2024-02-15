@@ -4,6 +4,8 @@
 
 This is an implementation of EBSI's SD-JWS data model: https://code.europa.eu/ebsi/ecosystem/-/blob/EBIP-SD-JWT/drafts/sd-jws.md
 
+This is work-in-progress, use at your own risk.
+
 ## Maven
 
 Build:
