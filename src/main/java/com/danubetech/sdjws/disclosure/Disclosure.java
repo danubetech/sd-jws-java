@@ -61,12 +61,6 @@ public class Disclosure {
 
     @Override
     public String toString() {
-        return "Disclosure{" +
-                "salt='" + salt + '\'' +
-                ", jsonPointer=" + jsonPointer +
-                ", jsonValue=" + jsonValue +
-                ", disclosureJson=" + disclosureJson +
-                ", disclosureString='" + disclosureString + '\'' +
-                '}';
+        return this.getDisclosureString();
     }
 }
