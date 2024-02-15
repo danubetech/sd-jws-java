@@ -45,7 +45,7 @@ Running this code:
 
 ```java
 SDJWSObject sdjwsObject = SDJWSObject.fromJson(JSON);
-Disclosure disclosure = sdjwsObject.generateDisclosure(Json.createPointer("/credentialSubject"));
+Disclosure disclosure = sdjwsObject.generateDisclosure(Json.createPointer("/credentialSubject/familyName"));
 ```
 
 Results in this disclosure:
