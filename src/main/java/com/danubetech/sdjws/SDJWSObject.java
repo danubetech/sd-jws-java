@@ -96,6 +96,10 @@ public class SDJWSObject {
             jsonObjectBuilder.add("_sd_alg", digestGenerator.getAlgorithm());
         }
 
+        // set the "_sd_typ" value
+
+        jsonObjectBuilder.add("_sd_typ", "application/json");
+
         // finish manipulation of the SD-JWS object
 
         jsonObject = jsonObjectBuilder.build();
