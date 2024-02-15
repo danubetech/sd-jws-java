@@ -94,25 +94,6 @@ Results in this JSON object:
 
 ## Securing the SD-JWS object:
 
-### JWS Compact Serialization:
-
-Running this code:
-
-```java
-SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
-JWSObject jwsObject = JWSGenerator.getInstance().generateJWSObject(sdjwsObject, DISCLOSURES, JWSAlgorithm.ES256);
-
-ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
-JWSSigner jwsSigner = new ECDSASigner(ecKey);
-jwsObject.sign(jwsSigner);
-```
-
-Results in this JWS:
-
-```
-eyJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdLCJ0eXAiOiJKT1NFIiwiYWxnIjoiRVMyNTYifQ.{"sd":{"@context":[{"value":"https://www.w3.org/ns/credentials/v2"}],"id":{"value":"urn:uuid:9bcc9aaa-3bdc-4414-9450-739c295c752c"},"issuer":{"value":"did:ebsi:zvHWX359A3CvfJnCYaAiAde"},"validFrom":{"value":"2023-01-01T00:00:00Z"},"validUntil":{"value":"2033-01-01T00:00:00Z"},"credentialSubject":{"id":{"value":"did:key:z2dmzD81cgPx8Vki7JbuuMmFYrWPgYoytykUZ3eyqht1j9KbsDbVZXdb3jzCagESyY4EE2x7Yjx3gNwctoEuRCKKDrdNP3HPFtG8RTvBiYStT5ghBHhHizH2Dy6xQtW3Pd2SecizL9b2jzDCMr7Ka5cRAWZFwvqwAtwTT7xet769y9ERh6"},"birthDate":{"value":"1832-01-27"},"student":{"valueType":"TRUE"}},"credentialSchema":{"id":{"value":"https://api-pilot.ebsi.eu/trusted-schemas-registry/v2/schemas/0x23039e6356ea6b703ce672e7cfac0b42765b150f63df78e2bd18ae785787f6a2"},"type":{"value":"JsonSchema"}},"_sd":[{"value":"PWpJuNXN0WZdcuhVtoizB2tHRYNr0AwyeXik2nwPFAc"},{"value":"cCPq3HfqiTNptfkMsMgUROh_YCdldFs8vRm1IK3Mgdc"},{"value":"PQBLWVCO7Gcs_zLAdmdL5BSzu3y2DHjb97oOo9FXsZs"}],"_sd_alg":{"value":"sha-256"},"_sd_typ":{"value":"application/vc+ld+json"}},"disclosures":[{"salt":"2GLC42sKQveCfGfryNRN9w","jsonPointer":{"tokens":["","credentialSubject","familyName"],"jsonPointer":"/credentialSubject/familyName"},"jsonValue":{"value":"Carroll"},"disclosureJson":[{"value":"2GLC42sKQveCfGfryNRN9w"},{"value":"/credentialSubject/familyName"},{"value":"Carroll"}],"disclosureString":"WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgIi9jcmVkZW50aWFsU3ViamVjdC9mYW1pbHlOYW1lIiwgIkNhcnJvbGwiXQ"},{"salt":"eluV5Og3gSNII8EYnsxA_A","jsonPointer":{"tokens":["","credentialSubject","givenName"],"jsonPointer":"/credentialSubject/givenName"},"jsonValue":{"value":"Lewis"},"disclosureJson":[{"value":"eluV5Og3gSNII8EYnsxA_A"},{"value":"/credentialSubject/givenName"},{"value":"Lewis"}],"disclosureString":"WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwgIi9jcmVkZW50aWFsU3ViamVjdC9naXZlbk5hbWUiLCAiTGV3aXMiXQ"},{"salt":"6Ij7tM-a5iVPGboS5tmvVA","jsonPointer":{"tokens":["","type"],"jsonPointer":"/type"},"jsonValue":[{"value":"VerifiableCredential"},{"value":"StudentID"}],"disclosureJson":[{"value":"6Ij7tM-a5iVPGboS5tmvVA"},{"value":"/type"},[{"value":"VerifiableCredential"},{"value":"StudentID"}]],"disclosureString":"WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgIi90eXBlIiwgWyJWZXJpZmlhYmxlQ3JlZGVudGlhbCIsICJTdHVkZW50SUQiXV0"}]}.Z7HEDgzszmO4SYif5z-eILyPYsfUpFWRy8E0LAov908jNHNpn59-sApJfhCJSCOqXDCCDYrEE_Zv9BleZWBIcg
-```
-
 ### Flattened JWS JSON Serialization Syntax:
 
 Running this code:
