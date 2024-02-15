@@ -11,6 +11,15 @@ import java.util.Set;
 
 public class JWSGenerator {
 
+    private static final JWSGenerator instance = new JWSGenerator();
+
+    public static JWSGenerator getInstance() {
+        return instance;
+    }
+
+    public JWSGenerator() {
+    }
+
     public JWSObject generateJWSObject(SDJWSObject sdjwsObject, List<Disclosure> disclosures, JWSAlgorithm jwsAlgorithm) {
 
         JWSHeader jwsHeader = new JWSHeader.Builder(jwsAlgorithm)

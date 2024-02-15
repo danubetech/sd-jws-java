@@ -50,7 +50,7 @@ public class JWSGeneratorTest {
 	@Test
 	public void testJWSGenerator() throws Exception {
 		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
-		JWSObject jwsObject = new JWSGenerator().generateJWSObject(sdjwsObject, DISCLOSURES, JWSAlgorithm.ES256);
+		JWSObject jwsObject = JWSGenerator.getInstance().generateJWSObject(sdjwsObject, DISCLOSURES, JWSAlgorithm.ES256);
 
 		ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
 		JWSSigner jwsSigner = new ECDSASigner(ecKey);
@@ -60,7 +60,7 @@ public class JWSGeneratorTest {
 	@Test
 	public void testJWSGeneratorJSON() throws Exception {
 		SDJWSObject sdjwsObject = SDJWSObject.fromJson(SDJWS);
-		JWSObjectJSON jwsObjectJson = new JWSGenerator().generateJWSObjectJSON(sdjwsObject, DISCLOSURES);
+		JWSObjectJSON jwsObjectJson = JWSGenerator.getInstance().generateJWSObjectJSON(sdjwsObject, DISCLOSURES);
 
 		JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.ES256)
 				.type(JOSEObjectType.JOSE)
@@ -71,5 +71,6 @@ public class JWSGeneratorTest {
 		ECKey ecKey = new ECKeyGenerator(Curve.P_256).generate();
 		JWSSigner jwsSigner = new ECDSASigner(ecKey);
 		jwsObjectJson.sign(jwsHeader, jwsSigner);
+		System.out.println(jwsObjectJson.serializeFlattened());
 	}
 }
